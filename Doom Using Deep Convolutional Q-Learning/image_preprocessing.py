@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.misc import imresize
+import gymnasium as gym
 from gym.core import ObservationWrapper
 from gym.spaces.box import Box
 

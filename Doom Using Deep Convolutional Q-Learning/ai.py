@@ -26,6 +26,7 @@ class CNN(nn.Module):
         self.fc1 = nn.Linear(in_features=self.count_neurons((1, 80, 80)), out_features=40)
         self.fc2 = nn.Linear(in_features=40, out_features=number_actions)
 
+    #Eyes of the AI
     def count_neurons(self, image_dim):
         x = Variable(torch.rand(1, *image_dim))
         x = F.relu(F.max_pool2d(self.convolution1(x), 3, 2))
@@ -93,7 +94,7 @@ def eligibility_trace(batch):
     for series in batch:
         input = Variable(torch.from_numpy(np.array([series[0].state, series[-1].state], dtype=np.float32)))
         output = cnn(input)
-        cumul_reward = 0.0 if series[-1].done else output[1].data_max()
+        cumul_reward = 0.0 if series[-1].done else output[1].data.max()
         for step in reversed(series[:-1]):
             cumul_reward = step.reward + gamma * cumul_reward
         state = series[0].state

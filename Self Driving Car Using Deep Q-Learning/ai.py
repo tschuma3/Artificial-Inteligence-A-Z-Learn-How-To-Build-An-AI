@@ -64,7 +64,7 @@ class Dqn():
         next_output = self.model(batch_next_state).detach().max(1)[0]
         target = self.gamma * next_output + batch_reward #gamma * Q + R
         td_loss = F.smooth_l1_loss(outputs, target) #Uses the Hubber Loss
-        self.optimizer.zero_grad() #Stochastic Gradient Descent
+        self.optimizer.zero_grad() #Stochastic Gradient Descent and Initializes the Optimizer
         td_loss.backward(retain_variables=True) #Backward Propagation 
         self.optimizer.step()
 
