@@ -1,3 +1,9 @@
+"""
+Google CoLab link to find the updated code.
+Can be found in the Artificial Intelligence A-Z: Learn How To Build An AI
+"""
+
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -6,9 +12,9 @@ import torch.optim as optim
 from torch.autograd import Variable
 
 #Importing packages for OpenAI and Doom
-import gymnasium as gym
-from gym.wrappers import SkipWrapper
-from ppaquette_gym_doom.wrappers.action_space import ToDiscrete
+import gym
+import vizdoomgym #from ppaquette_gym_doom.wrappers.action_space import ToDiscrete
+from gym import wrappers #from gym.wrappers import SkipWrapper
 
 #Importing the other Python files 
 import experience_replay, image_preprocessing
@@ -23,7 +29,7 @@ class CNN(nn.Module):
         self.convolution1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=5)
         self.convolution1 = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=3)
         self.convolution1 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=2)
-        self.fc1 = nn.Linear(in_features=self.count_neurons((1, 80, 80)), out_features=40)
+        self.fc1 = nn.Linear(in_features=self.count_neurons((1, 256, 256)), out_features=40) #Original (1, 80, 80)
         self.fc2 = nn.Linear(in_features=40, out_features=number_actions)
 
     #Eyes of the AI
@@ -73,7 +79,7 @@ class AI:
 #region Training the AI with Deep Convolutional Q-Learning 
 
 #Getting the Doom evironment
-doom_env = image_preprocessing.PreprocessImage(SkipWrapper(4)(ToDiscrete("minimal")(gym.make("ppaquette/DoomCorridor-v0"))), width = 80, height = 80, grayscale = True)
+doom_env = image_preprocessing.PreprocessImage(gym.make("VizdoomCorridor-v0"), width = 256, height = 256, grayscale = True) #Original height = 80, original width = 80
 doom_env = gym.wrappers.Monitor(doom_env, "videos", force = True)
 number_actions = doom_env.action_space.n
 
@@ -127,7 +133,7 @@ ma = MA(100)
 #Training the AI
 loss = nn.MSELoss()
 optimizer = optim.Adam(cnn.parameters(), lr=0.001)
-nb_epochs = 100
+nb_epochs = 20 #Original nb_epochs = 100
 for epoch in range(1, nb_epochs + 1):
     memory.run_steps(200)
     for batch in memory.sample_batch(128):
